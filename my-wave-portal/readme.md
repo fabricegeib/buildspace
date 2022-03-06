@@ -193,3 +193,112 @@ Compiled 1 Solidity file successfully
 Yo yo, I am a contract and I am smart
 Contract deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
 ```
+
+### Store the data
+
+Mettre à jour le fichier ```WavePortal.sol```
+
+```sol
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.8.0;
+
+import "hardhat/console.sol";
+
+contract WavePortal {
+    uint256 totalWaves;
+
+    constructor() {
+        console.log("Yo yo, I am a contract and I am smart");
+    }
+
+    function wave() public {
+        totalWaves += 1;
+        console.log("%s has waved!", msg.sender);
+    }
+
+    function getTotalWaves() public view returns (uint256) {
+        console.log("We have %d total waves!", totalWaves);
+        return totalWaves;
+    }
+}
+```
+
+Faire de même le fichier ```run.js```
+
+```js
+const main = async () => {
+  const [owner, randomPerson] = await hre.ethers.getSigners();
+  const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+  const waveContract = await waveContractFactory.deploy();
+  await waveContract.deployed();
+
+  console.log("Contract deployed to:", waveContract.address);
+  console.log("Contract deployed by:", owner.address);
+
+  let waveCount;
+  waveCount = await waveContract.getTotalWaves();
+
+  let waveTxn = await waveContract.wave();
+  await waveTxn.wait();
+
+  waveCount = await waveContract.getTotalWaves();
+};
+
+const runMain = async () => {
+  try {
+    await main();
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+runMain();
+```
+
+Excutez à nouveau votre script ```run.js```
+
+```shell
+npx hardhat run scripts/run.js
+```
+
+Retour dans le terminal
+
+```shell
+Compiled 1 Solidity file successfully
+Yo yo, I am a contract and I am smart
+Contract deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Contract deployed by: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+We have 0 total waves!
+0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 has waved!
+We have 1 total waves!
+```
+
+### Test other users
+```js
+waveTxn = await waveContract.connect(randomPerson).wave();
+await waveTxn.wait();
+
+waveCount = await waveContract.getTotalWaves();
+```
+
+Retour
+```shell
+Yo yo, I am a contract and I am smart
+Contract deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Contract deployed by: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+We have 0 total waves!
+0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 has waved!
+We have 1 total waves!
+0x70997970c51812dc3a010c7d01b50e0d17dc79c8 has waved!
+We have 2 total waves!
+```
+
+Customize your code a little!! Maybe you want to store something else? I want you to mess around. Maybe you want to store the address of the sender in an array? Maybe you want to store a map of addresses and wave counts so you keep track of who's waving at you the most? Even if you just change up the variable names and function names to be something you think is interesting that's a big deal. Try to not straight up copy me! Think of your final website and the kind of functionality you want. Build the functionality you want.
+
+### Writing a script to deploy locally
+```shell
+npx hardhat node
+```
