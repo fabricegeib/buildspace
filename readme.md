@@ -1,9 +1,10 @@
 # Buildspace Projects
-https://app.buildspace.so/home
+Projects proposé par [buildspace](https://app.buildspace.so/home)
 
 ### Build a Web3 App with Solidity + Ethereum Smart Contracts
-https://app.buildspace.so/projects/CO02cf0f1c-f996-4f50-9669-
-https://github.com/fabricegeib/buildspace/tree/master/my-wave-portal
+[Lien du projet](https://app.buildspace.so/projects/CO02cf0f1c-f996-4f50-9669-cf945ca3fb0b)
+
+[Lien vers mon repo pour ce projet](https://github.com/fabricegeib/buildspace/tree/master/my-wave-portal)
 
 ### Mint your own NFT collection and ship a Web3 app to show them off
 https://app.buildspace.so/projects/CO961ddb5f-f428-4608-9949-a9a2f461eb3f
