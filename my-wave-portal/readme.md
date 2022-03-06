@@ -9,8 +9,10 @@ Project réalisé et documenté par [Fabrice Geib](https://fabricegeib.com)
 ### Create the project
 
 - Créer le dossier ```my-wave-portal```
+- Crée un fichier ```.gitignore``` et y ajouter ```node_modules/```
 - Initialiser npm
 - Installer hardhat
+
 ```shell
 mkdir my-wave-portal
 cd my-wave-portal
@@ -121,3 +123,50 @@ Trois nouveaux dossiers ont été créés dans votre project :
 - ```test``` contenant un fichier ```sample-test.js```
 
 Afin de faire un peu de ménage vous pouvez supprimer les fichiers mais conservés les dossiers, nous allons en avoir besoin prochainement
+
+### Let's write a contract
+
+Dans le dossier ```contracts``` crée un nouveau fichier ```WavePortal.sol```
+(La structure des fichiers est importante, soyez prudent)
+
+```sol
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.8.4;
+
+import "hardhat/console.sol";
+
+contract WavePortal {
+    constructor() {
+        console.log("Yo yo, I am a contract and I am smart");
+    }
+}
+```
+
+Vérifier que vous utilisez la même version de Solidity dans ```WavePortal.sol``` et ```hardhat.config.js```
+
+### Build a script to run our contract
+
+Dans le dossier script crée un fichier ```run.js```
+
+```js
+const main = async () => {
+  const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+  const waveContract = await waveContractFactory.deploy();
+  await waveContract.deployed();
+  console.log("Contract deployed to:", waveContract.address);
+};
+
+const runMain = async () => {
+  try {
+    await main();
+    process.exit(0); // exit Node process without error
+  } catch (error) {
+    console.log(error);
+    process.exit(1); // exit Node process while indicating 'Uncaught Fatal Exception' error
+  }
+  // Read more about Node exit ('process.exit(num)') status codes here: https://stackoverflow.com/a/47163396/7974948
+};
+
+runMain();
+```
