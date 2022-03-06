@@ -1,0 +1,15 @@
+{
+  "name": "my-wave-portal",
+  "version": "1.0.0",
+  "description": "Build a Web3 App with Solidity + Ethereum Smart Contracts - https://app.buildspace.so/projects/CO02cf0f1c-f996-4f50-9669-cf945ca3fb0b",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.9.1"
+  }
+}
