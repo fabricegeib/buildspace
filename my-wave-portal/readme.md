@@ -397,4 +397,4 @@ Account balance:  39826994638806774425
 WavePortal address:  0x38FafaC0faf61A1FF4cB89941b5d68347Ff92032
 ```
 
-https://rinkeby.etherscan.io/address/0x38fafac0faf61a1ff4cb89941b5d68347ff92032
+Lien vers le contract crée : https://rinkeby.etherscan.io/address/0x38fafac0faf61a1ff4cb89941b5d68347ff92032

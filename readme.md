@@ -6,6 +6,8 @@ Projects proposé par [buildspace](https://app.buildspace.so/home)
 
 [Lien vers mon repo pour ce projet](https://github.com/fabricegeib/buildspace/tree/master/my-wave-portal)
 
+[Lien vers le site / l'application pour ce projet](https://buildspace-my-wave-portal-app-fabrice.vercel.app/)
+
 ### Mint your own NFT collection and ship a Web3 app to show them off
 https://app.buildspace.so/projects/CO961ddb5f-f428-4608-9949-a9a2f461eb3f
 
