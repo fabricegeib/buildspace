@@ -1,6 +1,6 @@
 import * as React from "react";
-import { ethers } from "ethers";
-import logo from './logo.svg';
+// import { ethers } from "ethers";
+// import logo from './logo.svg';
 import './App.css';
 
 const wave = () => {
