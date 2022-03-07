@@ -350,3 +350,51 @@ Retour dans le terminal
 Account balance:  10000000000000000000000
 WavePortal address:  0x5FbDB2315678afecb367f032d93F642f64180aa3
 ```
+
+### Push online
+
+https://buildspace-my-wave-portal-app-fabrice.vercel.app/
+
+### Utiliser Alchemy
+
+Installer le paquet ```dotenv``` pour ne pas diffuser vos clés privées [Alchemy](https://dashboard.alchemyapi.io/) ou [Metamask](https://metamask.io/)
+
+```shell
+npm 
+install dotenv
+```
+
+Créer un fichier ```.env``` content les url et clés privées dont vous avez besoin
+
+```
+ALCHEMY_API_URL_RINKEBY="https://eth-rinkeby.alchemyapi.io/v2/xxx"
+PRIVATE_KEY="xxx"
+```
+
+Mettre à jour le fichier ```hardhat.config.js```
+
+```js
+require("@nomiclabs/hardhat-waffle");
+
+module.exports = {
+  solidity: "0.8.0",
+  networks: {
+    rinkeby: {
+      url: process.env.ALCHEMY_API_URL_RINKEBY,
+      accounts: [process.env.PRIVATE_KEY]
+    },
+  },
+};
+```
+
+```shell
+npx hardhat run scripts/deploy.js --network rinkeby
+```
+Retour
+```shell
+Deploying contracts with account:  0x1151B473355f42bD97eAf2A5721c6825318d178F
+Account balance:  39826994638806774425
+WavePortal address:  0x38FafaC0faf61A1FF4cB89941b5d68347Ff92032
+```
+
+https://rinkeby.etherscan.io/address/0x38fafac0faf61a1ff4cb89941b5d68347ff92032
