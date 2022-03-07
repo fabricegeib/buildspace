@@ -299,6 +299,54 @@ We have 2 total waves!
 Customize your code a little!! Maybe you want to store something else? I want you to mess around. Maybe you want to store the address of the sender in an array? Maybe you want to store a map of addresses and wave counts so you keep track of who's waving at you the most? Even if you just change up the variable names and function names to be something you think is interesting that's a big deal. Try to not straight up copy me! Think of your final website and the kind of functionality you want. Build the functionality you want.
 
 ### Writing a script to deploy locally
+
+Ouvrir un 2ème terminal et executer la commande
+
 ```shell
 npx hardhat node
+```
+
+You just started a local Ethereum network that stays alive. And, as you can see Hardhat gave us 20 accounts to work with and gave them all 10000 ETH we are now rich!
+
+Dans le dossier script crée un nouveau fichier ```deploy.js```
+
+```js
+const main = async () => {
+  const [deployer] = await hre.ethers.getSigners();
+  const accountBalance = await deployer.getBalance();
+
+  console.log("Deploying contracts with account: ", deployer.address);
+  console.log("Account balance: ", accountBalance.toString());
+
+  const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+  const waveContract = await waveContractFactory.deploy();
+  await waveContract.deployed();
+
+  console.log("WavePortal address: ", waveContract.address);
+};
+
+const runMain = async () => {
+  try {
+    await main();
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+runMain();
+```
+
+Executer le fichier ```deploy.js```
+
+```shell
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+Retour dans le terminal
+
+```shell
+Account balance:  10000000000000000000000
+WavePortal address:  0x5FbDB2315678afecb367f032d93F642f64180aa3
 ```
