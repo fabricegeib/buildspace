@@ -8,6 +8,16 @@ Project réalisé et documenté par [Fabrice Geib](https://fabricegeib.com)
 
 Live : https://buildspace-my-wave-portal-app-fabrice.vercel.app/
 
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+```
+npm install -g serve
+serve -s build
+```
+
 ### Create the project
 
 - Créer le dossier ```my-wave-portal```
