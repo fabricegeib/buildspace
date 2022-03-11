@@ -6,6 +6,8 @@ by buildspace.so
 
 Project réalisé et documenté par [Fabrice Geib](https://fabricegeib.com)
 
+Live : https://buildspace-my-wave-portal-app-fabrice.vercel.app/
+
 ### Create the project
 
 - Créer le dossier ```my-wave-portal```
