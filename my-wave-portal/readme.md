@@ -609,3 +609,160 @@ TODO : Ajouter une barre de chargement pendant le minage
 
 # 3
 ### Storing messages in arrays using structs
+
+Mettre a jour notre contrat `WavePortal.sol` afin d'y stocker nos messages sous forme de tableau :
+
+```sol
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.8.4;
+
+import "hardhat/console.sol";
+
+contract WavePortal {
+    uint256 totalWaves;
+
+    /*
+     * A little magic, Google what events are in Solidity!
+     */
+    event NewWave(address indexed from, uint256 timestamp, string message);
+
+    /*
+     * I created a struct here named Wave.
+     * A struct is basically a custom datatype where we can customize what we want to hold inside it.
+     */
+    struct Wave {
+        address waver; // The address of the user who waved.
+        string message; // The message the user sent.
+        uint256 timestamp; // The timestamp when the user waved.
+    }
+
+    /*
+     * I declare a variable waves that lets me store an array of structs.
+     * This is what lets me hold all the waves anyone ever sends to me!
+     */
+    Wave[] waves;
+
+    constructor() {
+        console.log("I AM SMART CONTRACT. SKIDIP.");
+    }
+
+    /*
+     * You'll notice I changed the wave function a little here as well and
+     * now it requires a string called _message. This is the message our user
+     * sends us from the frontend!
+     */
+    function wave(string memory _message) public {
+        totalWaves += 1;
+        console.log("%s waved w/ message %s", msg.sender, _message);
+
+        /*
+         * This is where I actually store the wave data in the array.
+         */
+        waves.push(Wave(msg.sender, _message, block.timestamp));
+
+        /*
+         * I added some fanciness here, Google it and try to figure out what it is!
+         * Let me know what you learn in #general-chill-chat
+         */
+        emit NewWave(msg.sender, block.timestamp, _message);
+    }
+
+    /*
+     * I added a function getAllWaves which will return the struct array, waves, to us.
+     * This will make it easy to retrieve the waves from our website!
+     */
+    function getAllWaves() public view returns (Wave[] memory) {
+        return waves;
+    }
+
+    function getTotalWaves() public view returns (uint256) {
+        // Optional: Add this line if you want to see the contract print the value!
+        // We'll also print it over in run.js as well.
+        console.log("We have %d total waves!", totalWaves);
+        return totalWaves;
+    }
+}
+```
+Mettre a jour le script `run.js` :
+```
+const main = async () => {
+  const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+  const waveContract = await waveContractFactory.deploy();
+  await waveContract.deployed();
+  console.log("Contract addy:", waveContract.address);
+
+  let waveCount;
+  waveCount = await waveContract.getTotalWaves();
+  console.log(waveCount.toNumber());
+
+  /**
+   * Let's send a few waves!
+   */
+  let waveTxn = await waveContract.wave("A message!");
+  await waveTxn.wait(); // Wait for the transaction to be mined
+
+  const [_, randomPerson] = await hre.ethers.getSigners();
+  waveTxn = await waveContract.connect(randomPerson).wave("Another message!");
+  await waveTxn.wait(); // Wait for the transaction to be mined
+
+  let allWaves = await waveContract.getAllWaves();
+  console.log(allWaves);
+};
+
+const runMain = async () => {
+  try {
+    await main();
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+runMain();
+```
+
+Dans le terminal executer la commande `npx hardhat run scripts/run.js`
+Le retour devrait ressembler a cela :
+```shell
+Compiled 1 Solidity file successfully
+I AM SMART CONTRACT. SKIDP
+Contract addy: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+We have 0 total waves!
+0
+0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 waved w/ message A messa0ge!
+0x70997970c51812dc3a010c7d01b50e0d17dc79c8 waved w/ message Another message!
+[                                                                  s
+  [
+    '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',                  2
+    'A message!',
+    BigNumber { _hex: '0x622a9c4c', _isBigNumber: true },           
+    waver: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    message: 'A message!',
+    timestamp: BigNumber { _hex: '0x622a9c4c', _isBigNumber: true }  ],
+  [
+    '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+    'Another message!',
+    BigNumber { _hex: '0x622a9c4d', _isBigNumber: true },
+    waver: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+    message: 'Another message!',
+    timestamp: BigNumber { _hex: '0x622a9c4d', _isBigNumber: true }  ]
+]
+```
+
+### Re-deploy
+
+Les données conservé dans le contrat actuel vont être perdues (mais ils existent des solutions pour palier a ce probleme, comme une sauvegarder sur une base de donnée externe) car les smart contrat son immuable, afin de sauvegarder et publier nos mises a jour on doit le redeployer :
+```
+npx hardhat run scripts/deploy.js --network rinkeby
+```
+
+Retour de notre deploiement :
+```
+Deploying contracts with account:  0x1151B473355f42bD97eAf2A5721c6825318d178F
+Account balance:  40324191647416459703
+WavePortal address:  0x26993fa912d92c4E46ced03273ddD6e67FC0Eafc
+```
+
+Lien vers le nouveau contrat avec Wave message : https://rinkeby.etherscan.io/address/0x26993fa912d92c4e46ced03273ddd6e67fc0eafc
