@@ -398,3 +398,212 @@ WavePortal address:  0x38FafaC0faf61A1FF4cB89941b5d68347Ff92032
 ```
 
 Lien vers le contract crée : https://rinkeby.etherscan.io/address/0x38fafac0faf61a1ff4cb89941b5d68347ff92032
+
+### Utiliser window.ethereum()
+
+Modifier le fichier `Apps.js` :
+
+```js
+import React, { useEffect } from "react";
+import "./App.css";
+
+const App = () => {
+  const checkIfWalletIsConnected = () => {
+    /*
+    * First make sure we have access to window.ethereum
+    */
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      console.log("Make sure you have metamask!");
+    } else {
+      console.log("We have the ethereum object", ethereum);
+    }
+  }
+
+  /*
+  * This runs our function when the page loads.
+  */
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
+
+  return (
+    <div className="mainContainer">
+      <div className="dataContainer">
+        <div className="header">
+        👋 Hey there!
+        </div>
+
+        <div className="bio">
+          I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
+        </div>
+
+        <button className="waveButton" onClick={null}>
+          Wave at Me
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default App
+```
+
+#### Build a connect wallet button
+
+```js
+import React, { useEffect, useState } from "react";
+import "./App.css";
+
+const App = () => {
+  const [currentAccount, setCurrentAccount] = useState("");
+
+  const checkIfWalletIsConnected = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        console.log("Make sure you have metamask!");
+        return;
+      } else {
+        console.log("We have the ethereum object", ethereum);
+      }
+
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+
+      if (accounts.length !== 0) {
+        const account = accounts[0];
+        console.log("Found an authorized account:", account);
+        setCurrentAccount(account);
+      } else {
+        console.log("No authorized account found")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /**
+  * Implement your connectWallet method here
+  */
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert("Get MetaMask!");
+        return;
+      }
+
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+      console.log("Connected", accounts[0]);
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
+
+  return (
+    <div className="mainContainer">
+      <div className="dataContainer">
+        <div className="header">
+        👋 Hey there!
+        </div>
+
+        <div className="bio">
+          I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
+        </div>
+
+        <button className="waveButton" onClick={null}>
+          Wave at Me
+        </button>
+
+        {/*
+        * If there is no currentAccount render this button
+        */}
+        {!currentAccount && (
+          <button className="waveButton" onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App
+```
+
+### Read from the blockchain through our website
+
+Toujours dans le fichier `App.js` ajouter la fonction suivante sous la fonction `connectWallet()` :
+```
+const wave = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        let count = await wavePortalContract.getTotalWaves();
+        console.log("Retrieved total wave count...", count.toNumber());
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+}
+```
+
+```js
+<button className="waveButton" onClick={wave}>
+    Wave at Me
+</button>
+```
+
+Deux erreurs s'affichent a la compilation
+```
+Line 140:56:  'contractAddress' is not defined  no-undef
+Line 140:73:  'contractABI' is not defined      no-undef
+```
+
+### Setting Your Contract Address
+Ajouter l'adresse du contract crée précédemment au fichier `App.js` :
+```
+const contractAddress = "0x38FafaC0faf61A1FF4cB89941b5d68347Ff92032";
+```
+
+### Getting ABI File Content
+The contents of the ABI file can be found in a fancy JSON file in your hardhat project:
+`artifacts/contracts/WavePortal.sol/WavePortal.json`
+
+Pour ce projet on fait un simple "copier/coller"
+Copy the contents from your WavePortal.json and then head to your web app. You are going to make a new folder called utils under src. Under utils create a file named WavePortal.json. So the full path will look like:
+`src/utils/WavePortal.json`
+
+Dans le fichier `App.js` il faut ajouter ABI :
+```js
+import abi from "./utils/WavePortal.json";
+
+// In const App
+const contractABI = abi.abi;
+
+
+```
+
+Verifier l'envoi de votre Wave :
+https://rinkeby.etherscan.io/address/0x38FafaC0faf61A1FF4cB89941b5d68347Ff92032
+
+TODO : Ajouter une barre de chargement pendant le minage
+
+# 3
+### Storing messages in arrays using structs
